@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Функции — конспект и интерактив</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=Unbounded:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EBEFF3;
+  --sheet:#FFFFFF;
+  --grid:#D5E0E8;
+  --ink:#111E27;
+  --ink-2:#53656F;
+  --blue:#2C5FE6;
+  --red:#DE3348;
+  --green:#0C9A68;
+  --violet:#7A45D6;
+  --line:#C9D5DD;
+  --r:14px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:"Golos Text",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color:var(--ink);
+  background-color:var(--paper);
+  background-image:
+    repeating-linear-gradient(to right,var(--grid) 0 1px,transparent 1px 26px),
+    repeating-linear-gradient(to bottom,var(--grid) 0 1px,transparent 1px 26px);
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+.var,.fx{font-family:"Cambria Math",Cambria,Georgia,serif;font-style:italic}
+
+/* ---------- шапка ---------- */
+header.hero{padding:56px 0 30px}
+h1{
+  font-family:"Unbounded",system-ui,sans-serif;font-weight:600;
+  font-size:clamp(44px,8vw,82px);line-height:.92;letter-spacing:-.03em;margin:0 0 16px;
+}
+header.hero p{max-width:32em;color:var(--ink-2);font-size:17px;margin:0 0 26px}
+.toc{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;max-width:820px}
+.toc a{
+  text-decoration:none;color:var(--ink);background:var(--sheet);
+  border:1px solid var(--line);border-radius:10px;padding:12px 14px;
+  font-size:20px;display:block;
+}
+.toc a:hover{border-color:var(--ink)}
+.toc a small{display:block;font-size:13px;color:var(--ink-2);font-family:"Golos Text",sans-serif;font-style:normal;margin-top:2px}
+
+/* ---------- навигация ---------- */
+nav.chips{
+  position:sticky;top:0;z-index:20;background:rgba(235,239,243,.88);
+  backdrop-filter:blur(8px);border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+}
+.chips-in{display:flex;gap:8px;overflow-x:auto;padding:10px 20px;max-width:1120px;margin:0 auto;scrollbar-width:none}
+.chips-in::-webkit-scrollbar{display:none}
+.chips a{
+  flex:0 0 auto;text-decoration:none;color:var(--ink);border:1px solid var(--line);
+  background:var(--sheet);padding:6px 13px;border-radius:999px;font-size:15px;white-space:nowrap;
+}
+.chips a:hover{border-color:var(--ink)}
+
+/* ---------- секции ---------- */
+section{padding:60px 0 4px;scroll-margin-top:60px}
+h2{font-family:"Unbounded",sans-serif;font-weight:600;font-size:clamp(23px,3.2vw,32px);letter-spacing:-.02em;margin:0 0 18px}
+
+/* конспект */
+.konspekt{
+  background:var(--sheet);border:1px solid var(--line);border-left:4px solid var(--ink);
+  border-radius:var(--r);padding:22px 24px;
+}
+.konspekt>div+div,.konspekt>p+p{margin-top:14px}
+.konspekt .fmla{font-size:clamp(30px,5vw,42px);line-height:1.1;margin:0 0 16px}
+.konspekt ul{list-style:none;margin:0;padding:0;font-size:16px}
+.konspekt li{margin:2px 0}
+.konspekt li.key{font-weight:600;margin-top:10px}
+.konspekt li.key:first-child{margin-top:0}
+.graph-is{font-style:italic;font-size:19px;color:var(--ink);margin:14px 0 0}
+.dsheet{margin-top:18px;font-size:16px}
+.dsheet .d-title{font-weight:600;font-size:18px;margin-bottom:2px}
+.xv{font-size:26px;margin:0 0 4px}
+.frac{display:inline-block;vertical-align:middle;text-align:center;font-size:.56em;line-height:1.15;margin:0 .1em;position:relative;top:-.05em}
+.frac span{display:block;padding:0 .3em}
+.frac span:first-child{border-bottom:1.6px solid currentColor}
+
+/* интерактив */
+.play-head{
+  display:flex;align-items:center;gap:14px;margin:34px 0 20px;
+}
+.play-head h3{font-size:17px;font-weight:600;margin:0;white-space:nowrap}
+.play-head:after{content:"";flex:1;height:1px;background:var(--line)}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:34px;align-items:start}
+.cols>.sheet{position:sticky;top:70px}
+.play-head{margin-top:26px}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+.sheet{background:var(--sheet);border:1px solid var(--line);border-radius:var(--r);padding:8px;box-shadow:0 1px 0 rgba(17,30,39,.06)}
+canvas{display:block;width:100%;height:100%;touch-action:none}
+.plot{aspect-ratio:1/.85}
+.plot-tall{aspect-ratio:1/1}
+.plot-sm{aspect-ratio:1/.9}
+.eqline{font-size:24px;font-weight:600;letter-spacing:-.01em;margin:0 0 18px}
+.hint{font-size:14px;color:var(--ink-2);margin:-6px 0 18px}
+.hint b{color:var(--red)}
+
+/* элементы управления */
+.ctrl{margin:0 0 18px}
+.ctrl-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:4px}
+.ctrl-name{font-size:15px;font-weight:600}
+.ctrl-val{font-variant-numeric:tabular-nums;font-weight:600;font-size:15px;padding:1px 9px;border-radius:8px;background:#EEF2F6}
+.v-blue{color:var(--blue);background:#E9EFFD}
+.v-red{color:var(--red);background:#FCEAEC}
+.ctrl-note{font-size:13.5px;color:var(--ink-2);margin-top:3px;min-height:1.2em}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:22px;background:transparent;cursor:grab;margin:0}
+input[type=range]:active{cursor:grabbing}
+input[type=range]::-webkit-slider-runnable-track{height:4px;background:var(--line);border-radius:99px}
+input[type=range]::-moz-range-track{height:4px;background:var(--line);border-radius:99px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent,var(--blue));border:3px solid #fff;margin-top:-8px;box-shadow:0 1px 4px rgba(17,30,39,.35)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--accent,var(--blue));border:3px solid #fff;box-shadow:0 1px 4px rgba(17,30,39,.35)}
+input[type=range]:focus-visible{outline:2px solid var(--ink);outline-offset:4px;border-radius:6px}
+.btn-row{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 18px}
+button{font:inherit;font-size:14px;font-weight:500;background:var(--sheet);color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:7px 15px;cursor:pointer}
+button:hover{border-color:var(--ink)}
+button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.readout{font-size:15px;display:grid;gap:6px;margin-top:6px;padding:14px;border:1px dashed var(--line);border-radius:var(--r);background:rgba(255,255,255,.6)}
+.readout div{display:flex;justify-content:space-between;gap:12px}
+.readout b{font-variant-numeric:tabular-nums}
+.verdict-line{font-size:15px;margin:14px 0 0;padding-left:14px;border-left:3px solid var(--green)}
+
+/* тест */
+.reveal{margin-top:36px;border-top:1px dashed var(--line);padding-top:22px}
+.reveal-btn{font-size:15px;font-weight:600;padding:9px 18px}
+.reveal-btn[aria-expanded="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.reveal-body{margin-top:26px}
+.reveal-body[hidden]{display:none}
+.quiz{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:26px;margin-top:8px}
+.q{background:var(--sheet);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.q h3{font-size:16px;font-weight:600;margin:0 0 12px}
+.q .plot-sm{margin-bottom:14px;border:1px solid #EFF3F6;border-radius:10px;overflow:hidden}
+.opts{display:grid;gap:8px}
+.opt{text-align:left;padding:9px 13px;border-radius:10px;width:100%}
+.opt.correct{background:#E4F5EE;border-color:var(--green);color:#07603F;font-weight:600}
+.opt.wrong{background:#FCEAEC;border-color:var(--red);color:#8E1B29}
+.verdict{font-size:14px;color:var(--ink-2);margin-top:10px;min-height:1.3em}
+
+footer{padding:52px 0 70px;color:var(--ink-2);font-size:14px;border-top:1px solid var(--line);margin-top:60px}
+
+@media (max-width:880px){
+  .cols,.cols.rev,.duo,.quiz{grid-template-columns:1fr;gap:22px}
+  .cols>.sheet{position:static}
+  .toc{grid-template-columns:1fr 1fr}
+  header.hero{padding-top:34px}
+  section{padding-top:46px}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<header class="hero wrap">
+  <h1>Функции</h1>
+  <p>Конспект и живые графики: сначала правило из тетради, потом ползунки, чтобы увидеть, за что отвечает каждый коэффициент.</p>
+  <div class="toc">
+    <a href="#linear"><span class="fx">y = kx + b</span><small>Линейная функция</small></a>
+    <a href="#prop"><span class="fx">y = kx</span><small>Прямая пропорциональность</small></a>
+    <a href="#const"><span class="fx">y = b</span><small>Постоянная функция</small></a>
+    <a href="#inverse"><span class="fx">y = k/x</span><small>Обратная пропорциональность</small></a>
+    <a href="#quad"><span class="fx">y = ax² + bx + c</span><small>Квадратичная функция</small></a>
+    <a href="#power"><span class="fx">y = x³, y = √x</span><small>Степенная и корень</small></a>
+  </div>
+</header>
+
+<nav class="chips">
+  <div class="chips-in">
+    <a href="#linear" class="fx">y = kx + b</a>
+    <a href="#prop" class="fx">y = kx</a>
+    <a href="#const" class="fx">y = b</a>
+    <a href="#inverse" class="fx">y = k/x</a>
+    <a href="#quad" class="fx">y = ax² + bx + c</a>
+    <a href="#power" class="fx">y = x³ и y = √x</a>
+    <a href="#quiz">Проверь себя</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<!-- ЛИНЕЙНАЯ -->
+<section id="linear">
+  <h2>Линейная функция</h2>
+  <div class="cols">
+   <div>
+    <div class="konspekt">
+    <div>
+      <p class="fmla fx">y = kx + b</p>
+      <ul>
+        <li class="key"><span class="var">k</span> — угловой коэффициент</li>
+        <li><span class="var">k</span> &gt; 0 угол острый</li>
+        <li><span class="var">k</span> &lt; 0 угол тупой</li>
+        <li class="key"><span class="var">b</span> — точка пересечения с осью <span class="var">Y</span></li>
+      </ul>
+    </div>
+    <p class="graph-is">графиком является прямая</p>
+  </div>
+
+  <div class="play-head"><h3>Попробуй сам</h3></div>
+      <p class="eqline" id="lin-eq">y = x + 2</p>
+      <p class="hint"><b>◆</b> точки на графике тоже можно тянуть мышью</p>
+      <div class="ctrl">
+        <div class="ctrl-top"><span class="ctrl-name"><span class="var">k</span></span><span class="ctrl-val v-red" id="lin-k-val">1</span></div>
+        <input type="range" id="lin-k" min="-4" max="4" step="0.1" value="1" style="--accent:var(--red)" aria-label="Коэффициент k">
+        <div class="ctrl-note" id="lin-k-note"></div>
+      </div>
+      <div class="ctrl">
+        <div class="ctrl-top"><span class="ctrl-name"><span class="var">b</span></span><span class="ctrl-val v-blue" id="lin-b-val">2</span></div>
+        <input type="range" id="lin-b" min="-5" max="5" step="0.1" value="2" aria-label="Коэффициент b">
+        <div class="ctrl-note">прямая пересекает ось <span class="var">Y</span> в точке <span class="var">b</span></div>
+      </div>
+      <div class="btn-row">
+        <button id="lin-sweep-k">Прокрутить <span class="var">k</span></button>
+        <button id="lin-sweep-b">Прокрутить <span class="var">b</span></button>
+        <button id="lin-reset">Сбросить</button>
+      </div>
+    </div>
+    <div class="sheet"><div class="plot-tall"><canvas id="c-linear"></canvas></div></div>
+  </div>
+</section>
+
+<!-- ПРЯМАЯ ПРОПОРЦИОНАЛЬНОСТЬ -->
+<section id="prop">
+  <h2>Прямая пропорциональность</h2>
+  <div class="cols">
+   <div>
+    <div class="konspekt">
+    <p class="fmla fx" style="margin:0">y = kx</p>
+    <p class="graph-is">графиком является прямая, проходящая через начало координат</p>
+  </div>
+
+  <div class="play-head"><h3>Попробуй сам</h3></div>
+      <p class="eqline" id="prop-eq">y = 2x</p>
+      <div class="ctrl">
+        <div class="ctrl-top"><span class="ctrl-name"><span class="var">k</span></span><span class="ctrl-val v-red" id="prop-k-val">2</span></div>
+        <input type="range" id="prop-k" min="-4" max="4" step="0.1" value="2" style="--accent:var(--red)" aria-label="Коэффициент k">
+        <div class="ctrl-note">при любом <span class="var">k</span> прямая проходит через точку (0; 0)</div>
+      </div>
+      <div class="btn-row"><button id="prop-sweep">Прокрутить <span class="var">k</span></button></div>
+    </div>
+    <div class="sheet"><div class="plot"><canvas id="c-prop"></canvas></div></div>
+  </div>
+</section>
+
+<!-- ПОСТОЯННАЯ -->
+<section id="const">
+  <h2>Постоянная функция</h2>
+  <div class="cols">
+   <div>
+    <div class="konspekt">
+    <p class="fmla fx" style="margin:0">y = b</p>
+    <p class="graph-is">графиком является прямая, параллельная оси абсцисс</p>
+  </div>
+
+  <div class="play-head"><h3>Попробуй сам</h3></div>
+      <p class="eqline" id="const-eq">y = 3</p>
+      <div class="ctrl">
+        <div class="ctrl-top"><span class="ctrl-name"><span class="var">b</span></span><span class="ctrl-val v-blue" id="const-b-val">3</span></div>
+        <input type="range" id="const-b" min="-5" max="5" step="0.1" value="3" aria-label="Коэффициент b">
+        <div class="ctrl-note">какой бы <span class="var">x</span> ни взяли, значение одно и то же</div>
+      </div>
+      <div class="btn-row"><button id="const-sweep">Прокрутить <span class="var">b</span></button></div>
+    </div>
+    <div class="sheet"><div class="plot"><canvas id="c-const"></canvas></div></div>
+  </div>
+</section>
+
+<!-- ОБРАТНАЯ -->
+<section id="inverse">
+  <h2>Обратная пропорциональность</h2>
+  <div class="cols">
+   <div>
+    <div class="konspekt">
+    <div>
+      <p class="fmla fx">y = <span class="frac"><span>k</span><span>x</span></span></p>
+      <ul>
+        <li><span class="var">k</span> &gt; 0 — ветви в I и III четвертях</li>
+        <li><span class="var">k</span> &lt; 0 — ветви во II и IV четвертях</li>
+      </ul>
+    </div>
+    <p class="graph-is">графиком является гипербола</p>
+  </div>
+
+  <div class="play-head"><h3>Попробуй сам</h3></div>
+      <p class="eqline" id="inv-eq">y = 4/x</p>
+      <div class="ctrl">
+        <div class="ctrl-top"><span class="ctrl-name"><span class="var">k</span></span><span class="ctrl-val v-red" id="inv-k-val">4</span></div>
+        <input type="range" id="inv-k" min="-8" max="8" step="0.2" value="4" style="--accent:var(--red)" aria-label="Коэффициент k гиперболы">
+        <div class="ctrl-note" id="inv-note">ветви в I и III четвертях</div>
+      </div>
+      <div class="btn-row"><button id="inv-sweep">Провести <span class="var">k</span> через ноль</button></div>
+    </div>
+    <div class="sheet"><div class="plot-tall"><canvas id="c-inv"></canvas></div></div>
+  </div>
+
+  <div class="reveal">
+    <button class="reveal-btn" data-target="shift-inv" aria-expanded="false">Показать сдвиги гиперболы</button>
+    <div class="reveal-body" id="shift-inv" hidden>
+      <div class="cols">
+       <div>
+        <div class="konspekt">
+          <p class="fmla fx">y = <span class="frac"><span>k</span><span>x + m</span></span> + n</p>
+          <p class="graph-is">та же гипербола, сдвинутая по осям</p>
+          <ul>
+            <li class="key">асимптоты: <span class="var">x</span> = −<span class="var">m</span> и <span class="var">y</span> = <span class="var">n</span></li>
+            <li><span class="var">m</span> &gt; 0 — сдвиг влево на <span class="var">m</span></li>
+            <li><span class="var">m</span> &lt; 0 — сдвиг вправо на |<span class="var">m</span>|</li>
+            <li><span class="var">n</span> &gt; 0 — сдвиг вверх на <span class="var">n</span></li>
+            <li><span class="var">n</span> &lt; 0 — сдвиг вниз на |<span class="var">n</span>|</li>
+            <li class="key"><span class="var">k</span> — как и раньше: четверти и размах ветвей</li>
+          </ul>
+        </div>
+
+        <div class="play-head"><h3>Попробуй сам</h3></div>
+        <p class="eqline" id="sh-eq">y = 4/x</p>
+        <div class="ctrl">
+          <div class="ctrl-top"><span class="ctrl-name"><span class="var">k</span></span><span class="ctrl-val v-red" id="sh-k-val">4</span></div>
+          <input type="range" id="sh-k" min="-8" max="8" step="0.2" value="4" style="--accent:var(--red)" aria-label="Коэффициент k">
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-top"><span class="ctrl-name"><span class="var">m</span> — сдвиг по горизонтали</span><span class="ctrl-val" id="sh-m-val">0</span></div>
+          <input type="range" id="sh-m" min="-5" max="5" step="0.1" value="0" style="--accent:var(--violet)" aria-label="Сдвиг m">
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-top"><span class="ctrl-name"><span class="var">n</span> — сдвиг по вертикали</span><span class="ctrl-val v-blue" id="sh-n-val">0</span></div>
+          <input type="range" id="sh-n" min="-5" max="5" step="0.1" value="0" aria-label="Сдвиг n">
+        </div>
+        <div class="btn-row">
+          <button id="sh-sweep-m">Сдвинуть влево-вправо</button>
+          <button id="sh-sweep-n">Сдвинуть вверх-вниз</button>
+          <button id="sh-reset">Вернуть в центр</button>
+        </div>
+        <div class="readout">
+          <div><span>вертикальная асимптота</span><b id="sh-ax">x = 0</b></div>
+          <div><span>горизонтальная асимптота</span><b id="sh-ay">y = 0</b></div>
+        </div>
+       </div>
+       <div class="sheet"><div class="plot-tall"><canvas id="c-sh"></canvas></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- КВАДРАТИЧНАЯ -->
+<section id="quad">
+  <h2>Квадратичная функция</h2>
+  <div class="cols">
+   <div>
+    <div class="konspekt">
+    <div>
+      <p class="fmla fx">y = ax² + bx + c</p>
+      <p class="graph-is" style="margin:0 0 14px">графиком является парабола</p>
+      <ul>
+        <li class="key"><span class="var">a</span> — коэффициент</li>
+        <li><span class="var">a</span> &gt; 0 ветви вверх</li>
+        <li><span class="var">a</span> &lt; 0 ветви вниз</li>
+        <li class="key"><span class="var">c</span> — точка пересечения с осью <span class="var">Y</span></li>
+      </ul>
+      <p class="xv fx" style="margin-top:16px">x<sub>в</sub> = <span class="frac"><span>−b</span><span>2a</span></span></p>
+    </div>
+    <div>
+      <div class="dsheet">
+        <div class="d-title fx">D</div>
+        <ul>
+          <li><span class="var">D</span> &gt; 0 &nbsp;2 решения</li>
+          <li><span class="var">D</span> = 0 &nbsp;1 решение</li>
+          <li><span class="var">D</span> &lt; 0 &nbsp;решений нет</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="play-head"><h3>Попробуй сам</h3></div>
+      <p class="eqline" id="quad-eq">y = x² − 2x − 3</p>
+      <div class="ctrl">
+        <div class="ctrl-top"><span class="ctrl-name"><span class="var">a</span></span><span class="ctrl-val v-red" id="quad-a-val">1</span></div>
+        <input type="range" id="quad-a" min="-2" max="2" step="0.05" value="1" style="--accent:var(--red)" aria-label="Коэффициент a">
+        <div class="ctrl-note" id="quad-a-note">a &gt; 0 — ветви вверх</div>
+      </div>
+      <div class="ctrl">
+        <div class="ctrl-top"><span class="ctrl-name"><span class="var">b</span></span><span class="ctrl-val" id="quad-b-val">−2</span></div>
+        <input type="range" id="quad-b" min="-6" max="6" step="0.1" value="-2" style="--accent:var(--violet)" aria-label="Коэффициент b">
+        <div class="ctrl-note">двигает вершину вбок</div>
+      </div>
+      <div class="ctrl">
+        <div class="ctrl-top"><span class="ctrl-name"><span class="var">c</span></span><span class="ctrl-val v-blue" id="quad-c-val">−3</span></div>
+        <input type="range" id="quad-c" min="-6" max="6" step="0.1" value="-3" aria-label="Коэффициент c">
+        <div class="ctrl-note">точка пересечения с осью <span class="var">Y</span></div>
+      </div>
+      <div class="btn-row">
+        <button id="quad-sweep-a">Перевернуть ветви</button>
+        <button id="quad-sweep-b">Прокатить вершину</button>
+        <button id="quad-sweep-c">Поднять и опустить</button>
+      </div>
+      <div class="readout">
+        <div><span class="fx">x<sub>в</sub> = −b / 2a</span><b id="quad-xv">1</b></div>
+        <div><span class="fx">D = b² − 4ac</span><b id="quad-d">16</b></div>
+        <div><span>корни</span><b id="quad-roots">−1 и 3</b></div>
+      </div>
+      <p class="verdict-line" id="quad-dnote"><span class="var">D</span> &gt; 0 — 2 решения</p>
+    </div>
+    <div class="sheet"><div class="plot-tall"><canvas id="c-quad"></canvas></div></div>
+  </div>
+
+  <div class="reveal">
+    <button class="reveal-btn" data-target="shift-quad" aria-expanded="false">Показать сдвиги параболы</button>
+    <div class="reveal-body" id="shift-quad" hidden>
+      <div class="cols">
+       <div>
+        <div class="konspekt">
+          <p class="fmla fx">y = k(x + m)² + n</p>
+          <p class="graph-is">та же парабола, сдвинутая по осям</p>
+          <ul>
+            <li class="key">вершина — точка (−<span class="var">m</span>; <span class="var">n</span>)</li>
+            <li><span class="var">m</span> &gt; 0 — сдвиг влево на <span class="var">m</span></li>
+            <li><span class="var">m</span> &lt; 0 — сдвиг вправо на |<span class="var">m</span>|</li>
+            <li><span class="var">n</span> &gt; 0 — сдвиг вверх на <span class="var">n</span></li>
+            <li><span class="var">n</span> &lt; 0 — сдвиг вниз на |<span class="var">n</span>|</li>
+            <li class="key"><span class="var">k</span> — как и раньше: направление ветвей и ширина</li>
+          </ul>
+        </div>
+
+        <div class="play-head"><h3>Попробуй сам</h3></div>
+        <p class="eqline" id="sq-eq">y = x²</p>
+        <div class="ctrl">
+          <div class="ctrl-top"><span class="ctrl-name"><span class="var">k</span></span><span class="ctrl-val v-red" id="sq-k-val">1</span></div>
+          <input type="range" id="sq-k" min="-2" max="2" step="0.05" value="1" style="--accent:var(--red)" aria-label="Коэффициент k">
+          <div class="ctrl-note" id="sq-k-note">k &gt; 0 — ветви вверх</div>
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-top"><span class="ctrl-name"><span class="var">m</span> — сдвиг по горизонтали</span><span class="ctrl-val" id="sq-m-val">0</span></div>
+          <input type="range" id="sq-m" min="-5" max="5" step="0.1" value="0" style="--accent:var(--violet)" aria-label="Сдвиг m">
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-top"><span class="ctrl-name"><span class="var">n</span> — сдвиг по вертикали</span><span class="ctrl-val v-blue" id="sq-n-val">0</span></div>
+          <input type="range" id="sq-n" min="-5" max="5" step="0.1" value="0" aria-label="Сдвиг n">
+        </div>
+        <div class="btn-row">
+          <button id="sq-sweep-m">Сдвинуть влево-вправо</button>
+          <button id="sq-sweep-n">Сдвинуть вверх-вниз</button>
+          <button id="sq-reset">Вернуть в центр</button>
+        </div>
+        <div class="readout">
+          <div><span>вершина</span><b id="sq-vertex">(0; 0)</b></div>
+          <div><span>в развёрнутом виде</span><b id="sq-abc">y = x²</b></div>
+        </div>
+       </div>
+       <div class="sheet"><div class="plot-tall"><canvas id="c-sq"></canvas></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- СТЕПЕННАЯ И КОРЕНЬ -->
+<section id="power">
+  <h2>Степенная функция и функция корня</h2>
+  <div class="cols">
+   <div>
+    <div class="konspekt">
+      <p class="fmla fx" style="margin:0">y = x³</p>
+      <p class="graph-is">степенная функция</p>
+    </div>
+
+  <div class="play-head"><h3>Попробуй сам</h3></div>
+      <p class="eqline" id="pow-eq">y = x³</p>
+      <div class="btn-row" role="group" aria-label="Показатель степени">
+        <button class="deg" data-n="2">n = 2</button>
+        <button class="deg on" data-n="3">n = 3</button>
+        <button class="deg" data-n="4">n = 4</button>
+        <button class="deg" data-n="5">n = 5</button>
+      </div>
+      <div class="ctrl">
+        <div class="ctrl-top"><span class="ctrl-name"><span class="var">a</span></span><span class="ctrl-val v-red" id="pow-a-val">1</span></div>
+        <input type="range" id="pow-a" min="-2" max="2" step="0.05" value="1" style="--accent:var(--red)" aria-label="Множитель a">
+        <div class="ctrl-note" id="pow-note">нечётная степень: график симметричен относительно точки (0; 0)</div>
+      </div>
+    </div>
+    <div class="sheet"><div class="plot-tall"><canvas id="c-pow"></canvas></div></div>
+  </div>
+
+  <div class="cols" style="margin-top:40px">
+   <div>
+    <div class="konspekt">
+      <p class="fmla fx" style="margin:0">y = √x</p>
+      <p class="graph-is">функция корня</p>
+    </div>
+
+  <div class="play-head"><h3>Попробуй сам</h3></div>
+      <p class="eqline" id="root-eq">y = √x</p>
+      <div class="ctrl">
+        <div class="ctrl-top"><span class="ctrl-name"><span class="var">a</span></span><span class="ctrl-val v-red" id="root-a-val">1</span></div>
+        <input type="range" id="root-a" min="-2" max="2" step="0.05" value="1" style="--accent:var(--red)" aria-label="Множитель a">
+        <div class="ctrl-note">график существует только при <span class="var">x</span> ≥ 0</div>
+      </div>
+    </div>
+    <div class="sheet"><div class="plot-tall"><canvas id="c-root"></canvas></div></div>
+  </div>
+</section>
+
+<!-- ТЕСТ -->
+<section id="quiz">
+  <h2>Проверь себя</h2>
+  <div class="quiz">
+    <div class="q" data-answer="1">
+      <h3>1. Какой формуле отвечает график?</h3>
+      <div class="plot-sm"><canvas id="c-q1"></canvas></div>
+      <div class="opts">
+        <button class="opt fx">y = 2x</button>
+        <button class="opt fx">y = −2x</button>
+        <button class="opt fx">y = −2</button>
+        <button class="opt fx">y = 2/x</button>
+      </div>
+      <p class="verdict" data-explain="Прямая проходит через начало координат и идёт вниз, значит k < 0."></p>
+    </div>
+    <div class="q" data-answer="1">
+      <h3>2. Ветви гиперболы во II и IV четвертях. Что это?</h3>
+      <div class="plot-sm"><canvas id="c-q2"></canvas></div>
+      <div class="opts">
+        <button class="opt fx">y = 3/x</button>
+        <button class="opt fx">y = −3/x</button>
+        <button class="opt fx">y = x³</button>
+        <button class="opt fx">y = −3x</button>
+      </div>
+      <p class="verdict" data-explain="Во II и IV четвертях ветви оказываются только при k < 0."></p>
+    </div>
+    <div class="q" data-answer="2">
+      <h3>3. Парабола с ветвями вниз пересекает ось Y в точке 2.</h3>
+      <div class="plot-sm"><canvas id="c-q3"></canvas></div>
+      <div class="opts">
+        <button class="opt fx">y = x² + 2</button>
+        <button class="opt fx">y = −x² − 2</button>
+        <button class="opt fx">y = −x² + 2</button>
+        <button class="opt fx">y = 2x² + 2</button>
+      </div>
+      <p class="verdict" data-explain="Ветви вниз — это a < 0, а пересечение с осью Y — это c = 2."></p>
+    </div>
+    <div class="q" data-answer="0">
+      <h3>4. Дискриминант равен нулю. Как расположена парабола?</h3>
+      <div class="opts">
+        <button class="opt">Касается оси X в одной точке</button>
+        <button class="opt">Пересекает ось X дважды</button>
+        <button class="opt">Не пересекает ось X</button>
+        <button class="opt">Совпадает с осью X</button>
+      </div>
+      <p class="verdict" data-explain="D = 0 — одно решение, вершина лежит на оси X."></p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="wrap">Конспект по теме «Функции»: линейная, прямая и обратная пропорциональность, постоянная, квадратичная, степенная и функция корня.</footer>
+
+<script>
+(function(){
+"use strict";
+const RM = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const C = { ink:"#111E27", ink2:"#53656F", grid:"#E1E9EF",
+  blue:"#2C5FE6", red:"#DE3348", green:"#0C9A68", violet:"#7A45D6", grey:"#9FB0BB" };
+
+const r1 = v => Math.round(v*10)/10;
+function num(v){
+  v = r1(v);
+  if(Object.is(v,-0)) v = 0;
+  const s = Number.isInteger(v) ? String(v) : v.toFixed(1).replace(".",",");
+  return s.replace("-","\u2212");
+}
+function term(k,name){
+  const v = r1(k);
+  if(v === 1) return name;
+  if(v === -1) return "\u2212" + name;
+  return num(v) + name;
+}
+function tail(b){
+  const v = r1(b);
+  if(v === 0) return "";
+  return v > 0 ? " + " + num(v) : " \u2212 " + num(Math.abs(v));
+}
+
+const PANELS = [];
+class Panel{
+  constructor(sel, opts){
+    this.canvas = document.querySelector(sel);
+    if(!this.canvas) return;
+    this.ctx = this.canvas.getContext("2d");
+    this.span = opts.span || 16;
+    this.originX = opts.originX != null ? opts.originX : 0.5;
+    this.originY = opts.originY != null ? opts.originY : 0.5;
+    this.renderFn = opts.render;
+    this.onUpdate = opts.onUpdate || null;
+    this.labels = opts.labels !== false;
+    this.cur = Object.assign({}, opts.params);
+    this.tgt = Object.assign({}, opts.params);
+    this.sweepState = null;
+    this.dirty = true; this.w = 0; this.h = 0; this.u = 1; this.cx = 0; this.cy = 0;
+    if(window.ResizeObserver) new ResizeObserver(() => this.resize()).observe(this.canvas);
+    else window.addEventListener("resize", () => this.resize());
+    this.resize();
+    PANELS.push(this);
+    if(this.onUpdate) this.onUpdate(this.tgt);
+  }
+  resize(){
+    const r = this.canvas.getBoundingClientRect();
+    if(!r.width || !r.height) return;
+    const d = Math.min(window.devicePixelRatio || 1, 2);
+    this.w = r.width; this.h = r.height;
+    this.canvas.width = Math.round(r.width*d);
+    this.canvas.height = Math.round(r.height*d);
+    this.ctx.setTransform(d,0,0,d,0,0);
+    this.u = this.w/this.span;
+    this.cx = this.w*this.originX;
+    this.cy = this.h*this.originY;
+    this.dirty = true;
+    this.draw();
+  }
+  draw(){
+    if(!this.w || !this.h || !this.renderFn) return;
+    this.renderFn(this, this.cur);
+  }
+  X(x){ return this.cx + x*this.u; }
+  Y(y){ return this.cy - y*this.u; }
+  iX(px){ return (px - this.cx)/this.u; }
+  iY(py){ return (this.cy - py)/this.u; }
+  set(key, val, instant){
+    this.tgt[key] = val;
+    if(instant || RM) this.cur[key] = val;
+    this.dirty = true;
+    if(this.onUpdate) this.onUpdate(this.tgt);
+  }
+  sweep(key, from, to, dur){
+    if(RM){ this.set(key, to, true); return; }
+    this.sweepState = { key, from, to, dur, t0: performance.now() };
+  }
+  tick(now){
+    let moving = false;
+    if(this.sweepState){
+      const s = this.sweepState;
+      let u = (now - s.t0)/s.dur;
+      if(u >= 1){ u = 1; this.sweepState = null; }
+      const tri = u < .5 ? u*2 : (1-u)*2;
+      const e = .5 - .5*Math.cos(Math.PI*tri);
+      const v = s.from + (s.to - s.from)*e;
+      this.cur[s.key] = v; this.tgt[s.key] = v;
+      if(this.onUpdate) this.onUpdate(this.tgt);
+      moving = true;
+    }
+    for(const k in this.tgt){
+      const d = this.tgt[k] - this.cur[k];
+      if(Math.abs(d) > 0.0005){ this.cur[k] += d*0.22; moving = true; }
+      else if(this.cur[k] !== this.tgt[k]){ this.cur[k] = this.tgt[k]; moving = true; }
+    }
+    if(moving || this.dirty){ this.dirty = false; this.draw(); }
+  }
+  grid(){
+    const g = this.ctx;
+    g.clearRect(0,0,this.w,this.h);
+    g.lineWidth = 1; g.strokeStyle = C.grid;
+    const xa = Math.ceil(this.iX(0)), xb = Math.floor(this.iX(this.w));
+    const yb = Math.ceil(this.iY(this.h)), ya = Math.floor(this.iY(0));
+    g.beginPath();
+    for(let i = xa; i <= xb; i++){ const px = Math.round(this.X(i)) + .5; g.moveTo(px,0); g.lineTo(px,this.h); }
+    for(let j = yb; j <= ya; j++){ const py = Math.round(this.Y(j)) + .5; g.moveTo(0,py); g.lineTo(this.w,py); }
+    g.stroke();
+    g.strokeStyle = C.ink; g.lineWidth = 1.6;
+    const ox = Math.round(this.X(0)) + .5, oy = Math.round(this.Y(0)) + .5;
+    g.beginPath(); g.moveTo(0,oy); g.lineTo(this.w,oy); g.moveTo(ox,this.h); g.lineTo(ox,0); g.stroke();
+    g.fillStyle = C.ink;
+    g.beginPath(); g.moveTo(this.w-1,oy); g.lineTo(this.w-9,oy-4.5); g.lineTo(this.w-9,oy+4.5); g.closePath(); g.fill();
+    g.beginPath(); g.moveTo(ox,1); g.lineTo(ox-4.5,9); g.lineTo(ox+4.5,9); g.closePath(); g.fill();
+    if(this.labels){
+      g.font = "500 11px 'Golos Text',sans-serif"; g.fillStyle = C.ink2;
+      g.textAlign = "center"; g.textBaseline = "top";
+      for(let i = xa; i <= xb; i++){
+        if(i === 0 || i % 2 !== 0) continue;
+        const px = this.X(i); if(px < 12 || px > this.w-14) continue;
+        g.fillText(String(i), px, oy + 5);
+      }
+      g.textAlign = "right"; g.textBaseline = "middle";
+      for(let j = yb; j <= ya; j++){
+        if(j === 0 || j % 2 !== 0) continue;
+        const py = this.Y(j); if(py < 12 || py > this.h-10) continue;
+        g.fillText(String(j), ox - 6, py);
+      }
+      g.font = "600 12px 'Golos Text',sans-serif"; g.fillStyle = C.ink;
+      g.textAlign = "left"; g.textBaseline = "top";
+      g.fillText("x", this.w - 14, oy + 6);
+      g.fillText("y", ox + 8, 3);
+    }
+  }
+  curve(fn, color, opt){
+    opt = opt || {};
+    const g = this.ctx;
+    g.save();
+    g.lineWidth = opt.width || 2.6; g.lineJoin = "round"; g.lineCap = "round";
+    g.strokeStyle = color;
+    if(opt.dash) g.setLineDash(opt.dash);
+    g.beginPath();
+    let pen = false, prev = null;
+    const from = opt.from != null ? this.X(opt.from) : 0;
+    const to = opt.to != null ? this.X(opt.to) : this.w;
+    for(let px = Math.max(0,from); px <= Math.min(this.w,to); px += 1){
+      const y = fn(this.iX(px));
+      if(y == null || !isFinite(y)){ pen = false; prev = null; continue; }
+      const py = this.Y(y);
+      if(py < -this.h*4 || py > this.h*5){ pen = false; prev = null; continue; }
+      if(!pen){ g.moveTo(px,py); pen = true; }
+      else if(prev !== null && Math.abs(py - prev) > this.h*1.4){ g.moveTo(px,py); }
+      else g.lineTo(px,py);
+      prev = py;
+    }
+    g.stroke(); g.restore();
+  }
+  dot(x, y, color, label){
+    const g = this.ctx, px = this.X(x), py = this.Y(y);
+    if(px < -20 || px > this.w+20 || py < -20 || py > this.h+20) return;
+    g.save();
+    g.fillStyle = color; g.strokeStyle = "#fff"; g.lineWidth = 2;
+    g.beginPath(); g.arc(px,py,5.5,0,Math.PI*2); g.fill(); g.stroke();
+    if(label){
+      g.font = "600 13px 'Golos Text',sans-serif"; g.fillStyle = color;
+      g.textAlign = "left"; g.textBaseline = "bottom";
+      g.fillText(label, px + 9, py - 6);
+    }
+    g.restore();
+  }
+  handle(x, y, color){
+    const g = this.ctx, px = this.X(x), py = this.Y(y);
+    if(px < -30 || px > this.w+30 || py < -30 || py > this.h+30) return;
+    g.save();
+    g.fillStyle = color; g.globalAlpha = .16;
+    g.beginPath(); g.arc(px,py,14,0,Math.PI*2); g.fill();
+    g.globalAlpha = 1; g.strokeStyle = "#fff"; g.lineWidth = 2.5;
+    g.beginPath(); g.arc(px,py,7,0,Math.PI*2); g.fill(); g.stroke();
+    g.restore();
+  }
+  guide(x1,y1,x2,y2,color){
+    const g = this.ctx;
+    g.save(); g.setLineDash([4,5]); g.lineWidth = 1.4; g.strokeStyle = color;
+    g.beginPath(); g.moveTo(this.X(x1),this.Y(y1)); g.lineTo(this.X(x2),this.Y(y2)); g.stroke(); g.restore();
+  }
+  text(x, y, str, color, align){
+    const g = this.ctx;
+    g.save();
+    g.font = "600 13px 'Golos Text',sans-serif"; g.fillStyle = color;
+    g.textAlign = align || "left"; g.textBaseline = "middle";
+    g.fillText(str, this.X(x), this.Y(y)); g.restore();
+  }
+  angle(k, b){
+    if(Math.abs(k) < 0.06) return;
+    const x0 = -b/k, px = this.X(x0), py = this.Y(0);
+    if(px < 26 || px > this.w - 26) return;
+    const g = this.ctx, a = Math.atan(k);
+    g.save(); g.strokeStyle = C.violet; g.lineWidth = 1.8;
+    g.beginPath();
+    if(k > 0) g.arc(px,py,30,-a,0);
+    else g.arc(px,py,30,Math.PI,Math.PI-a,true);
+    g.stroke(); g.restore();
+  }
+}
+function loop(now){ for(const p of PANELS) p.tick(now); requestAnimationFrame(loop); }
+requestAnimationFrame(loop);
+const $ = s => document.querySelector(s);
+
+/* ---------- линейная ---------- */
+function handleX(panel, p){
+  let x = 2.5;
+  if(Math.abs(p.k) > 0.001){
+    const top = panel.iY(0) - 0.7, bot = panel.iY(panel.h) + 0.7;
+    const y = p.k*x + p.b;
+    if(y > top) x = (top - p.b)/p.k;
+    if(y < bot) x = (bot - p.b)/p.k;
+  }
+  if(Math.abs(x) < 0.9) x = x < 0 ? -0.9 : 0.9;
+  return Math.max(-6.5, Math.min(6.5, x));
+}
+const linear = new Panel("#c-linear", {
+  span: 16,
+  params: { k: 1, b: 2 },
+  render(g, p){
+    g.grid();
+    g.angle(p.k, p.b);
+    g.curve(x => p.k*x + p.b, C.red, { width: 3 });
+    const hx = handleX(g, p);
+    g.handle(hx, p.k*hx + p.b, C.red);
+    g.handle(0, p.b, C.blue);
+    g.text(0.4, p.b + 0.8, "b", C.blue);
+  },
+  onUpdate(p){
+    $("#lin-eq").textContent = "y = " + (r1(p.k) === 0 ? num(p.b) : term(p.k,"x") + tail(p.b));
+    $("#lin-k-val").textContent = num(p.k);
+    $("#lin-b-val").textContent = num(p.b);
+    const k = r1(p.k);
+    $("#lin-k-note").textContent = k > 0 ? "k > 0 — угол острый" : k < 0 ? "k < 0 — угол тупой" : "k = 0 — остаётся y = b";
+  }
+});
+bindRange("#lin-k", linear, "k");
+bindRange("#lin-b", linear, "b");
+$("#lin-sweep-k").addEventListener("click", () => runSweep(linear,"k",-3,3,2600,"#lin-k"));
+$("#lin-sweep-b").addEventListener("click", () => runSweep(linear,"b",-4,4,2200,"#lin-b"));
+$("#lin-reset").addEventListener("click", () => {
+  linear.sweepState = null;
+  setRange("#lin-k", linear, "k", 1);
+  setRange("#lin-b", linear, "b", 2);
+});
+(function drag(){
+  if(!linear.canvas) return;
+  const cv = linear.canvas;
+  let mode = null;
+  function near(e){
+    const r = cv.getBoundingClientRect();
+    const mx = e.clientX - r.left, my = e.clientY - r.top;
+    const p = linear.tgt, hx = handleX(linear, p);
+    const d1 = Math.hypot(mx - linear.X(0), my - linear.Y(p.b));
+    const d2 = Math.hypot(mx - linear.X(hx), my - linear.Y(p.k*hx + p.b));
+    if(d1 < 24 && d1 <= d2) return "b";
+    if(d2 < 24) return "k";
+    return null;
+  }
+  cv.addEventListener("pointerdown", e => {
+    mode = near(e);
+    if(mode){ linear.sweepState = null; cv.setPointerCapture(e.pointerId); e.preventDefault(); }
+  });
+  cv.addEventListener("pointermove", e => {
+    cv.style.cursor = (mode || near(e)) ? "grab" : "default";
+    if(!mode) return;
+    const r = cv.getBoundingClientRect();
+    const wy = linear.iY(e.clientY - r.top);
+    if(mode === "b"){
+      setRange("#lin-b", linear, "b", Math.max(-5, Math.min(5, r1(wy))), true);
+    }else{
+      const hx = handleX(linear, linear.tgt);
+      setRange("#lin-k", linear, "k", Math.max(-4, Math.min(4, r1((wy - linear.tgt.b)/hx))), true);
+    }
+  });
+  const stop = () => { mode = null; };
+  cv.addEventListener("pointerup", stop);
+  cv.addEventListener("pointercancel", stop);
+})();
+
+/* ---------- прямая пропорциональность ---------- */
+const prop = new Panel("#c-prop", {
+  span: 14,
+  params: { k: 2 },
+  render(g,p){ g.grid(); g.curve(x => p.k*x, C.red, {width:3}); g.dot(0,0,C.green,null); },
+  onUpdate(p){
+    $("#prop-eq").textContent = "y = " + (r1(p.k) === 0 ? "0" : term(p.k,"x"));
+    $("#prop-k-val").textContent = num(p.k);
+  }
+});
+bindRange("#prop-k", prop, "k");
+$("#prop-sweep").addEventListener("click", () => runSweep(prop,"k",-3,3,2600,"#prop-k"));
+
+/* ---------- постоянная ---------- */
+const constf = new Panel("#c-const", {
+  span: 14,
+  params: { b: 3 },
+  render(g,p){ g.grid(); g.curve(() => p.b, C.blue, {width:3}); g.dot(0,p.b,C.blue,null); },
+  onUpdate(p){
+    $("#const-eq").textContent = "y = " + num(p.b);
+    $("#const-b-val").textContent = num(p.b);
+  }
+});
+bindRange("#const-b", constf, "b");
+$("#const-sweep").addEventListener("click", () => runSweep(constf,"b",-4,4,2400,"#const-b"));
+
+/* ---------- гипербола ---------- */
+const inv = new Panel("#c-inv", {
+  span: 16,
+  params: { k: 4 },
+  render(g,p){
+    g.grid();
+    const k = p.k, q = g.ctx;
+    q.save(); q.globalAlpha = .07; q.fillStyle = k >= 0 ? C.blue : C.red;
+    if(k >= 0){
+      q.fillRect(g.X(0),0,g.w-g.X(0),g.Y(0));
+      q.fillRect(0,g.Y(0),g.X(0),g.h-g.Y(0));
+    }else{
+      q.fillRect(0,0,g.X(0),g.Y(0));
+      q.fillRect(g.X(0),g.Y(0),g.w-g.X(0),g.h-g.Y(0));
+    }
+    q.restore();
+    g.text(2.4,6.3,"I",C.ink2,"center");
+    g.text(-2.4,6.3,"II",C.ink2,"center");
+    g.text(-2.4,-6.3,"III",C.ink2,"center");
+    g.text(2.4,-6.3,"IV",C.ink2,"center");
+    if(Math.abs(k) < 0.05) g.text(0,1,"k = 0 — гиперболы нет",C.ink2,"center");
+    else g.curve(x => (Math.abs(x) < 1e-3 ? null : k/x), k >= 0 ? C.blue : C.red, {width:3});
+  },
+  onUpdate(p){
+    const k = r1(p.k);
+    $("#inv-eq").textContent = "y = " + num(k) + "/x";
+    $("#inv-k-val").textContent = num(k);
+    $("#inv-note").textContent = k > 0 ? "ветви в I и III четвертях" : k < 0 ? "ветви во II и IV четвертях" : "при k = 0 гиперболы нет";
+  }
+});
+bindRange("#inv-k", inv, "k");
+$("#inv-sweep").addEventListener("click", () => runSweep(inv,"k",6,-6,3000,"#inv-k"));
+
+/* ---------- парабола ---------- */
+const quad = new Panel("#c-quad", {
+  span: 16, originY: 0.62,
+  params: { a: 1, b: -2, c: -3 },
+  render(g,p){
+    g.grid();
+    const a = p.a, b = p.b, c = p.c;
+    if(Math.abs(a) < 0.02){
+      g.curve(x => b*x + c, C.ink2, {width:2.4, dash:[6,5]});
+      g.text(-7,5.4,"a = 0 — парабола пропала",C.ink2);
+      g.dot(0,c,C.blue,"c");
+      return;
+    }
+    const xv = -b/(2*a), yv = a*xv*xv + b*xv + c, D = b*b - 4*a*c;
+    g.guide(xv,0,xv,yv,C.violet);
+    g.curve(x => a*x*x + b*x + c, C.red, {width:3});
+    if(D > 0.02){
+      const s = Math.sqrt(D);
+      g.dot((-b-s)/(2*a),0,C.green,null);
+      g.dot((-b+s)/(2*a),0,C.green,null);
+    }else if(Math.abs(D) <= 0.02){
+      g.dot(xv,0,C.green,null);
+    }
+    g.dot(0,c,C.blue,"c");
+    g.dot(xv,yv,C.violet,null);
+  },
+  onUpdate(p){
+    const a = r1(p.a), b = r1(p.b), c = r1(p.c);
+    $("#quad-a-val").textContent = num(a);
+    $("#quad-b-val").textContent = num(b);
+    $("#quad-c-val").textContent = num(c);
+    let eq;
+    if(Math.abs(a) < 0.02) eq = (b === 0 ? "0" : term(b,"x")) + tail(c);
+    else eq = term(a,"x\u00B2") + (b === 0 ? "" : (b > 0 ? " + " : " \u2212 ") + term(Math.abs(b),"x")) + tail(c);
+    $("#quad-eq").textContent = "y = " + eq;
+    $("#quad-a-note").textContent = a > 0.02 ? "a > 0 — ветви вверх" : a < -0.02 ? "a < 0 — ветви вниз" : "a = 0 — функция уже не квадратичная";
+    const D = b*b - 4*a*c, note = $("#quad-dnote");
+    $("#quad-d").textContent = num(Math.round(D*100)/100);
+    if(Math.abs(a) < 0.02){
+      $("#quad-xv").textContent = "—";
+      $("#quad-roots").textContent = "—";
+      note.innerHTML = "a = 0 — осталась линейная функция";
+      note.style.borderColor = "var(--ink-2)";
+      return;
+    }
+    const xv = -b/(2*a);
+    $("#quad-xv").textContent = num(Math.round(xv*100)/100);
+    if(D > 0.02){
+      const s = Math.sqrt(D);
+      $("#quad-roots").textContent = num(Math.round(((-b-s)/(2*a))*100)/100) + " и " + num(Math.round(((-b+s)/(2*a))*100)/100);
+      note.innerHTML = "<span class='var'>D</span> &gt; 0 — 2 решения";
+      note.style.borderColor = "var(--green)";
+    }else if(D < -0.02){
+      $("#quad-roots").textContent = "нет";
+      note.innerHTML = "<span class='var'>D</span> &lt; 0 — решений нет";
+      note.style.borderColor = "var(--red)";
+    }else{
+      $("#quad-roots").textContent = num(Math.round(xv*100)/100);
+      note.innerHTML = "<span class='var'>D</span> = 0 — 1 решение";
+      note.style.borderColor = "var(--violet)";
+    }
+  }
+});
+bindRange("#quad-a", quad, "a");
+bindRange("#quad-b", quad, "b");
+bindRange("#quad-c", quad, "c");
+$("#quad-sweep-a").addEventListener("click", () => runSweep(quad,"a",1,-1,2600,"#quad-a"));
+$("#quad-sweep-b").addEventListener("click", () => runSweep(quad,"b",-5,5,2800,"#quad-b"));
+$("#quad-sweep-c").addEventListener("click", () => runSweep(quad,"c",-5,5,2400,"#quad-c"));
+
+/* ---------- сдвиги параболы ---------- */
+function bracket(m){
+  const v = r1(m);
+  if(v === 0) return "x";
+  return "(x" + tail(v) + ")";
+}
+const sq = new Panel("#c-sq", {
+  span: 16, originY: 0.58,
+  params: { k: 1, m: 0, n: 0 },
+  render(g,p){
+    g.grid();
+    g.curve(x => p.k*x*x, C.grey, {width:1.6, dash:[4,5]});
+    const vx = -p.m, vy = p.n;
+    g.guide(vx, 0, vx, vy, C.violet);
+    g.guide(0, vy, vx, vy, C.violet);
+    g.curve(x => p.k*(x + p.m)*(x + p.m) + p.n, C.red, {width:3});
+    g.dot(vx, vy, C.violet, null);
+    g.text(vx + 0.45, vy + 1, "(" + num(vx) + "; " + num(vy) + ")", C.violet);
+  },
+  onUpdate(p){
+    const k = r1(p.k), m = r1(p.m), n = r1(p.n);
+    $("#sq-k-val").textContent = num(k);
+    $("#sq-m-val").textContent = num(m);
+    $("#sq-n-val").textContent = num(n);
+    $("#sq-k-note").textContent = k > 0.02 ? "k > 0 — ветви вверх" : k < -0.02 ? "k < 0 — ветви вниз" : "k = 0 — параболы нет";
+    const head = Math.abs(k) < 0.02 ? "0" : (k === 1 ? "" : k === -1 ? "\u2212" : num(k));
+    $("#sq-eq").textContent = "y = " + (Math.abs(k) < 0.02 ? "" + num(n) : head + bracket(m) + "\u00B2" + tail(n));
+    $("#sq-vertex").textContent = "(" + num(-m) + "; " + num(n) + ")";
+    const a = k, b = 2*k*m, c = k*m*m + n;
+    if(Math.abs(a) < 0.02){
+      $("#sq-abc").textContent = "y = " + num(n);
+    }else{
+      const rb = Math.round(b*100)/100, rc = Math.round(c*100)/100;
+      $("#sq-abc").textContent = "y = " + term(a,"x\u00B2") +
+        (Math.abs(rb) < 0.005 ? "" : (rb > 0 ? " + " : " \u2212 ") + term(Math.abs(rb),"x")) +
+        (Math.abs(rc) < 0.005 ? "" : (rc > 0 ? " + " : " \u2212 ") + num(Math.abs(rc)));
+    }
+  }
+});
+bindRange("#sq-k", sq, "k");
+bindRange("#sq-m", sq, "m");
+bindRange("#sq-n", sq, "n");
+$("#sq-sweep-m").addEventListener("click", () => runSweep(sq,"m",-4,4,2800,"#sq-m"));
+$("#sq-sweep-n").addEventListener("click", () => runSweep(sq,"n",-4,4,2600,"#sq-n"));
+$("#sq-reset").addEventListener("click", () => {
+  sq.sweepState = null;
+  setRange("#sq-m", sq, "m", 0);
+  setRange("#sq-n", sq, "n", 0);
+});
+
+/* ---------- сдвиги гиперболы ---------- */
+const sh = new Panel("#c-sh", {
+  span: 16,
+  params: { k: 4, m: 0, n: 0 },
+  render(g,p){
+    g.grid();
+    const xL = g.iX(0), xR = g.iX(g.w), yT = g.iY(0), yB = g.iY(g.h);
+    g.guide(-p.m, yB, -p.m, yT, C.violet);
+    g.guide(xL, p.n, xR, p.n, C.violet);
+    g.curve(x => (Math.abs(x) < 1e-3 ? null : p.k/x), C.grey, {width:1.6, dash:[4,5]});
+    if(Math.abs(p.k) >= 0.05)
+      g.curve(x => (Math.abs(x + p.m) < 1e-3 ? null : p.k/(x + p.m) + p.n), p.k >= 0 ? C.blue : C.red, {width:3});
+    g.dot(-p.m, p.n, C.violet, null);
+  },
+  onUpdate(p){
+    const k = r1(p.k), m = r1(p.m), n = r1(p.n);
+    $("#sh-k-val").textContent = num(k);
+    $("#sh-m-val").textContent = num(m);
+    $("#sh-n-val").textContent = num(n);
+    $("#sh-eq").textContent = "y = " + num(k) + "/" + (m === 0 ? "x" : "(x" + tail(m) + ")") + tail(n);
+    $("#sh-ax").textContent = "x = " + num(-m);
+    $("#sh-ay").textContent = "y = " + num(n);
+  }
+});
+bindRange("#sh-k", sh, "k");
+bindRange("#sh-m", sh, "m");
+bindRange("#sh-n", sh, "n");
+$("#sh-sweep-m").addEventListener("click", () => runSweep(sh,"m",-4,4,2800,"#sh-m"));
+$("#sh-sweep-n").addEventListener("click", () => runSweep(sh,"n",-4,4,2600,"#sh-n"));
+$("#sh-reset").addEventListener("click", () => {
+  sh.sweepState = null;
+  setRange("#sh-m", sh, "m", 0);
+  setRange("#sh-n", sh, "n", 0);
+});
+
+/* ---------- раскрывающиеся блоки ---------- */
+document.querySelectorAll(".reveal-btn").forEach(btn => {
+  const body = document.querySelector("#" + btn.dataset.target);
+  const closedText = btn.textContent;
+  const openText = closedText.replace("Показать", "Скрыть");
+  btn.addEventListener("click", () => {
+    if(!body) return;
+    const opening = body.hasAttribute("hidden");
+    if(opening) body.removeAttribute("hidden");
+    else body.setAttribute("hidden","");
+    btn.setAttribute("aria-expanded", opening ? "true" : "false");
+    btn.textContent = opening ? openText : closedText;
+    if(opening) requestAnimationFrame(() => { for(const p of PANELS) p.resize(); });
+  });
+});
+
+/* ---------- степенная ---------- */
+const pow = new Panel("#c-pow", {
+  span: 8,
+  params: { a: 1, n: 3 },
+  render(g,p){
+    g.grid();
+    const n = Math.round(p.n);
+    g.curve(x => p.a*Math.pow(x,n), C.violet, {width:3});
+    g.dot(0,0,C.green,null);
+  },
+  onUpdate(p){
+    const n = Math.round(p.n), a = r1(p.a);
+    const sup = { 2:"\u00B2", 3:"\u00B3", 4:"\u2074", 5:"\u2075" }[n];
+    $("#pow-eq").textContent = "y = " + (Math.abs(a) < 0.02 ? "0" : term(a,"x"+sup));
+    $("#pow-a-val").textContent = num(a);
+    $("#pow-note").textContent = n % 2 === 0
+      ? "чётная степень: график симметричен относительно оси Y"
+      : "нечётная степень: график симметричен относительно точки (0; 0)";
+  }
+});
+bindRange("#pow-a", pow, "a");
+document.querySelectorAll(".deg").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".deg").forEach(b => b.classList.remove("on"));
+    btn.classList.add("on");
+    pow.set("n", Number(btn.dataset.n), true);
+  });
+});
+
+/* ---------- корень ---------- */
+const root = new Panel("#c-root", {
+  span: 12, originX: 0.3,
+  params: { a: 1 },
+  render(g,p){
+    g.grid();
+    g.curve(x => x, C.grey, {width:1.4, dash:[5,5]});
+    g.curve(x => (x < 0 ? null : x*x), C.grey, {width:1.6, dash:[3,4], to:4});
+    g.curve(x => (x < 0 ? null : p.a*Math.sqrt(x)), C.blue, {width:3});
+    g.dot(0,0,C.green,null);
+  },
+  onUpdate(p){
+    const a = r1(p.a);
+    $("#root-eq").textContent = "y = " + (Math.abs(a) < 0.02 ? "0" : term(a,"\u221Ax"));
+    $("#root-a-val").textContent = num(a);
+  }
+});
+bindRange("#root-a", root, "a");
+
+/* ---------- тест ---------- */
+new Panel("#c-q1", { span:12, labels:false, params:{}, render(g){ g.grid(); g.curve(x => -2*x, C.red, {width:3}); } });
+new Panel("#c-q2", { span:12, labels:false, params:{}, render(g){ g.grid(); g.curve(x => (Math.abs(x)<1e-3?null:-3/x), C.red, {width:3}); } });
+new Panel("#c-q3", { span:12, labels:false, originY:0.42, params:{}, render(g){ g.grid(); g.curve(x => -x*x + 2, C.red, {width:3}); g.dot(0,2,C.blue,null); } });
+
+document.querySelectorAll(".q").forEach(q => {
+  const answer = Number(q.dataset.answer);
+  const opts = Array.from(q.querySelectorAll(".opt"));
+  const verdict = q.querySelector(".verdict");
+  opts.forEach((btn,i) => {
+    btn.addEventListener("click", () => {
+      if(q.dataset.done) return;
+      q.dataset.done = "1";
+      opts[answer].classList.add("correct");
+      if(i !== answer) btn.classList.add("wrong");
+      verdict.textContent = (i === answer ? "Верно. " : "Не то. ") + verdict.dataset.explain;
+    });
+  });
+});
+
+/* ---------- вспомогательные ---------- */
+function bindRange(sel, panel, key){
+  const el = document.querySelector(sel);
+  if(!el) return;
+  el.addEventListener("input", () => { panel.sweepState = null; panel.set(key, parseFloat(el.value)); });
+}
+function setRange(sel, panel, key, v, instant){
+  const el = document.querySelector(sel);
+  if(el) el.value = v;
+  panel.set(key, v, instant);
+}
+function runSweep(panel, key, from, to, dur, sel){
+  panel.sweep(key, from, to, dur);
+  const el = document.querySelector(sel);
+  if(!el) return;
+  const t0 = performance.now();
+  (function follow(){
+    el.value = panel.tgt[key];
+    if(performance.now() - t0 < dur + 60) requestAnimationFrame(follow);
+  })();
+}
+window.addEventListener("load", () => { for(const p of PANELS) p.resize(); });
+})();
+</script>
+</body>
+</html>
